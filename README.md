@@ -1,4 +1,4 @@
-# MageConf’17 Magento Cloud workshop
+# MageConf’18  workshop
 
 ## Preparation
 ### Add your SSH key
@@ -19,21 +19,21 @@ Go to the **Projects** tab and select a project. Clone the project using a git l
 ![Clone the project](/images/clone_project.png?raw=true)
 
 ```
-git clone <projectid>@git.eu-3.magento.cloud:<projectid>.git mageconf2017
-cd mageconf2017
+git clone <projectid>@git.eu-3.magento.cloud:<projectid>.git mageconf2018
+cd mageconf2018
 ```
 
 Rest of commands will be performed from the project directory.
 
 
-## Task #1: change admin password
+## Step #1: change admin password
 A Magento Cloud instance as well as a deployment process can easily be customized through configuration files and environment variables.
 The environment variables can be added through web UI or cli utility.
 
 The **ADMIN_PASSWORD** variable controls a password of the admin user. To change the admin's password,
 go to the **Configure environment** > **Variables** and add the following environment variable:
 ```
-ADMIN_PASSWORD = mageconf2017
+ADMIN_PASSWORD = mageconf2018
 ```
 ![Set admin password](/images/admin_password.png?raw=true)
 
@@ -44,109 +44,109 @@ You can access the admin backend using a link from web UI + **/admin**
 ![Access site](/images/access_site.png?raw=true)
 
 
-## Task #2: clone branches
-It is easy to clone branches using web UI. The codebase as well as database are copied to a new
-virtual machine, then a deployment process is started in order to change BASE_URL.
+## Step #2: create basic performance test
 
-To clone a branch click on the **branch** button in the top right and set a name of the new branch:
+Sign in into Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
-![Create branch](/images/create_branch.png?raw=true)
+Specify:
+```pipeline {
+	agent any
+	stages {
+		stage("Docker Test") {
+			steps {
+				sh 'docker -v'
+			}
+		}
+		stage("Testing") {
+			parallel {
+				stage("ServerSide Tests") {
+					steps {
+                    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -j results/jmeter/benchmark.log -l results/jmeter/benchmark-results.jtl -e -o results/report/ -Jhost=<projectid>.dummycachetest.com -Jrequest_protocol=http -Jbase_path=/index.php -Jadmin_path=admin/admin -Jadmin_user=admin -Jadmin_password=123123q -JfrontendPoolUsers=1 -Jloops=5'
+                    }
+                }
+				stage("ClientSide Tests") {
+					steps {
+                      sh 'docker run --shm-size=1g --rm --privileged -v "$(pwd)"/results:/sitespeed.io sitespeedio/sitespeed.io:7.6.3 -b chrome  --video --speedIndex http://<projectid>.dummycachetest.com/ -n1 '
+                      }
+				}
+			}
+		}
+		stage("Pubblish") {
+			steps {
+				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**'
+			}
+		}
+	}
+}```
 
-The current branch will be cloned and new deployment started. It will take up to few minutes to finish the clone process.
-
-![Create branch progress](/images/create_branch_progress.png?raw=true)
-
-
-## Task #3: install a custom theme
-To install a custom theme just put it into app/design directory, commit and push changes.
-
-The Dark theme is the copy of Magento/Luma theme with dark gray background.
-
-```
-mkdir -p app/design/frontend/Vendor/
-curl -L https://github.com/yyevgenii/mageconf17/raw/master/resources/dark.zip -o dark.zip
-unzip dark.zip -d app/design/frontend/Vendor/
-rm dark.zip
-git add app/design/frontend/Vendor/
-git commit -m "Add Dark theme"
-git push
-```
-
-If you do not have installed *curl* utility, you can try to download file with *wget*:
-```
-wget https://github.com/yyevgenii/mageconf17/raw/master/resources/dark.zip
-```
-or download the file using a web browser.
-
-
-After deployment you have to switch to the Dark theme:
-1. Log in to admin backend
-2. Go to **Content > Configuration** page
-3. Open global scope to edit
-4. Switch **Applied Theme** to Magento Dark
-5. Save configuration
-
-![Switch theme](/images/switch_theme.png?raw?=true)
-
-Go to storefront to check changes.
+Click **Save** and **Build now**
 
 
-## Task #4: enable Elasticsearch service
+## Step #3: create basic performance test
 
-Add the following lines at the end of **.magento/services.yaml**:
+Sign in into Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
-```
-elasticsearch:
-    type: elasticsearch:2.4
-    disk: 1024
-```
+Specify:
+```pipeline {
+    parameters {
+        string(
+            name: 'MagentoHost',
+            description: 'Specify only HOST name where Magento located. Without protocol.'
+        )
+        string(
+            name: 'Loops',
+            defaultValue: '20',
+            description: 'Loops count for CS and SS testing'
+        )
+        string(
+            name: 'FrontendPullUsers',
+            defaultValue: '4',
+            description: 'Threads count for ServerSide testing'
+        )
+    }
+	agent any
+	stages {
+		stage("Docker Test") {
+			steps {
+				sh 'docker -v'
+			}
+		}
+		stage("Performance Measurements") {
+			parallel {
+				stage("ServerSide Tests") {
+					steps {
+                    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -j results/benchmark.log -l results/benchmark-results.jtl -e -o results/report/ \
+                    -Jhost=${MagentoHost} \
+                    -Jrequest_protocol=https \
+                    -Jbase_path=/ \
+                    -Jadmin_path=admin \
+                    -Jadmin_user=admin \
+                    -Jadmin_password=123123q \
+                    -JfrontendPoolUsers=${FrontendPullUsers} \
+                    -Jloops=${Loops}\
+                    -Jjmeter.save.saveservice.url=true'
+                    }
+                }
+				stage("ClientSide Tests") {
+					steps {
+                      sh 'docker run --shm-size=1g --rm --privileged -v "$(pwd)"/results:/sitespeed.io  sitespeedio/sitespeed.io:7.6.3 --outputFolder=results -b chrome  --video --speedIndex https://${MagentoHost} -n${Loops} '
+                      }
+				}
+			}
+		}
+		stage("Pubblish") {
+			steps {
+				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**'
+			}
+		}
+	}
+}```
 
 
-Add the elasticseach line into **relationships** section in the **.magento.app.yaml**:
-```
-    elasticsearch: "elasticsearch:elasticsearch"
-```
-
-The result relationships section should look like this:
-```
-relationships:
-    database: "mysql:mysql"
-    redis: "redis:redis"
-    elasticsearch: "elasticsearch:elasticsearch"
-```
-
-Commit and push changes:
-```
-git commit -am "Enable Elasticsearch service"
-git push
-```
-
-During the deployment process the Elasticsearch service will be installed and configured as well as the Magento catalog search engine will be switched to the Elasticsearch.
-Go to admin backend to verify changes, the search engine settings are located at **Stores > Configuration > Catalog > Catalog > Catalog Search**:
-
-![Catalog search](/images/catalog_search.png?raw?=true)
+Click **Save** and **Build now**.
+Click **Build with parameters**.
+Specify parameters and click **Build**.
 
 
-## Task #5: move static assets generation to the build stage
 
-This trick decreases maintenance time by moving the **setup:static-content:deploy** step to the stage build.
-On the build stage a database connection is not available and we do not know for which locales we have to generate
-static assets. But we can store locale settings in a file and pass locales to the **setup:static-content:deploy** command.
-
-
-For dumping the locale settings login into SSH console and run the following command:
-```
-php vendor/bin/m2-ece-scd-dump
-```
-
-![Dump locale settings](/images/scd_dump.png?raw?=true)
-
-The locale settings will be dumped into a **app/etc/config.php** file. Download this file using **scp** utility, commit it and push changes to git:
-```
-scp z5w7ezbx255oq-scd-c4txcga@ssh.eu-3.magento.cloud:app/etc/config.php app/etc/config.php
-git commit -m "Add locale settings into config.php" app/etc/config.php
-git push
-```
-
-During the deployment process you will see that the static assets generation runs before maintenance mode is being enabled. In this way we have decreased a downtime caused by a deployment process.
-
+## Step #4: Analize results
