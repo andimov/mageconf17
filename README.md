@@ -77,7 +77,8 @@ Specify:
 			}
 		}
 	}
-}```
+}
+```
 
 Click **Save** and **Build now**
 
@@ -140,9 +141,8 @@ Specify:
 			}
 		}
 	}
-}```
-
-
+}
+```
 Click **Save** and **Build now**.
 Click **Build with parameters**.
 Specify parameters and click **Build**.
