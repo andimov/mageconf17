@@ -125,33 +125,33 @@ Specify:
 			parallel {
 				stage("ServerSide Tests") {
 					steps {
-                    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -l ${WORKSPACE}/jmeter-results.jtl -e -o ${WORKSPACE}/jmeter-dashboard \
-                    -Jhost=${MagentoHost} \
-                    -Jrequest_protocol=https \
-                    -JfrontendPoolUsers=${FrontendPullUsers} \
-                    -Jloops=${Loops} \
-                    -Jbase_path=/ \
-                    -Jadmin_path=admin \
-                    -Jadmin_user=admin \
-                    -Jadmin_password=123123q \
-                    -JdeadLocksPoolUsers=0 \
-                    -JadminPoolUsers=0 \
-                    -Jjmeter.save.saveservice.url=true\
-                    -Jjmeter.save.saveservice.response_data=true\
-                    -Jjmeter.save.saveservice.samplerData=true\
-                    -Jjmeter.save.saveservice.requestHeaders=true\
-                    -Jjmeter.save.saveservice.url=true\
-                    -Jjmeter.save.saveservice.responseHeaders=true'
-                    }
-                }
-				stage("ClientSide Tests") {
-					steps {
-                      sh 'curl -O https://raw.githubusercontent.com/andimov/mageconf18/master/docker-compose.yml'
-					  sh 'docker-compose up -d'
-					  sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io sitespeed.io --video false --speedIndex https://${MagentoHost} https://${MagentoHost}/category-1.html https://${MagentoHost}/simple-product-10.html https://${MagentoHost}/configurable-product-1.html https://${MagentoHost}/catalogsearch/result/?q=simple -n${Loops} --graphite.host=graphite'
-                      }
+					    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -l ${WORKSPACE}/jmeter-results.jtl -e -o ${WORKSPACE}/jmeter-dashboard \
+					    -Jhost=${MagentoHost} \
+					    -Jrequest_protocol=https \
+					    -JfrontendPoolUsers=${FrontendPullUsers} \
+					    -Jloops=${Loops} \
+					    -Jbase_path=/ \
+					    -Jadmin_path=admin \
+					    -Jadmin_user=admin \
+					    -Jadmin_password=123123q \
+					    -JdeadLocksPoolUsers=0 \
+					    -JadminPoolUsers=0 \
+					    -Jjmeter.save.saveservice.url=true\
+					    -Jjmeter.save.saveservice.response_data=true\
+					    -Jjmeter.save.saveservice.samplerData=true\
+					    -Jjmeter.save.saveservice.requestHeaders=true\
+					    -Jjmeter.save.saveservice.url=true\
+					    -Jjmeter.save.saveservice.responseHeaders=true'
+					    }
+					}
+					stage("ClientSide Tests") {
+						steps {
+						      sh 'curl -O https://raw.githubusercontent.com/andimov/mageconf18/master/docker-compose.yml'
+									  sh 'docker-compose up -d'
+									  sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io sitespeed.io --video false --speedIndex https://${MagentoHost} https://${MagentoHost}/category-1.html https://${MagentoHost}/simple-product-10.html https://${MagentoHost}/configurable-product-1.html https://${MagentoHost}/catalogsearch/result/?q=simple -n${Loops} --graphite.host=graphite'
+						      }	
+					}
 				}
-			}
 		}
 	}
 	post {
