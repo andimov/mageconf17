@@ -13,40 +13,38 @@ ssh-keygen
 The new public key will be saved in the ~/.ssh/id_rsa/pub file.
 
 
-### Clone the project
-Go to the **Projects** tab and select a project. Clone the project using a git link in a web UI:
-
-![Clone the project](/images/clone_project.png?raw=true)
-
-```
-git clone <projectid>@git.eu-3.magento.cloud:<projectid>.git mageconf2018
-cd mageconf2018
-```
-
-Rest of commands will be performed from the project directory.
-
-
-## Step #1: change admin password
+### change admin password
 A Magento Cloud instance as well as a deployment process can easily be customized through configuration files and environment variables.
 The environment variables can be added through web UI or cli utility.
 
 The **ADMIN_PASSWORD** variable controls a password of the admin user. To change the admin's password,
 go to the **Configure environment** > **Variables** and add the following environment variable:
 ```
-ADMIN_PASSWORD = mageconf2018
+ADMIN_PASSWORD = 123123q
 ```
-![Set admin password](/images/admin_password.png?raw=true)
-
 When you save changes, a deployment process will be started in order to apply the changes.
 When it is done, you can sign in to admin backend using password you have set.
 You can access the admin backend using a link from web UI + **/admin**
 
 ![Access site](/images/access_site.png?raw=true)
 
+## Step #1: Connect to instance by ssh
+Go to the **Projects** tab and select a project. Connect the instance using ssh link in a web UI:
 
-## Step #2: create basic performance test
+![Connect to the project](/images/clone_project.png?raw=true)
 
-Sign in into Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
+```
+ssh <projectid>-master-7rqtwti--mymagento@ssh.eu-4.magento.cloud
+```
+
+## Step #2: Generate performance profile
+```
+bin/magento setup:perf:generate-fixtures setup/performance-toolkit/profiles/ee/small.xml
+```
+
+## Step #3: create basic performance test
+
+Sign in into Jenkins provided in access paper, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
 Specify:
 ```pipeline {
@@ -93,8 +91,7 @@ Specify:
 
 Click **Save** and **Build now**
 
-
-## Step #3: create advanced performance test
+## Step #4: create advanced performance test
 
 Sign in into Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
@@ -171,3 +168,6 @@ Specify parameters and click **Build**.
 
 
 ## Step #4: Analize results
+
+http://<jenkinsurl>:3000
+
