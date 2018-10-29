@@ -20,7 +20,7 @@ pipeline {
 		stage("Docker Test") {
 			steps {
 				sh 'docker -v'
-			    cleanWs()
+			    
 			}
 		}
 		stage("Testing") {
