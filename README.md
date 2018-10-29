@@ -54,27 +54,38 @@ Specify:
 	stages {
 		stage("Docker Test") {
 			steps {
-				sh 'docker -v'
+			    sh 'docker -v'
+			    cleanWs()
 			}
 		}
 		stage("Testing") {
 			parallel {
 				stage("ServerSide Tests") {
 					steps {
-                    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -j results/jmeter/benchmark.log -l results/jmeter/benchmark-results.jtl -e -o results/report/ -Jhost=<projectid>.dummycachetest.com -Jrequest_protocol=http -Jbase_path=/index.php -Jadmin_path=admin/admin -Jadmin_user=admin -Jadmin_password=123123q -JfrontendPoolUsers=1 -Jloops=5'
-                    }
-                }
+						sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -l ${WORKSPACE}/jmeter-results.jtl \
+						-Jhost=<projectid>.dummycachetest.com \
+						-Jrequest_protocol=https \
+						-Jloops=10 \
+						-Jbase_path=/ \
+						-Jadmin_path=admin \
+						-Jadmin_user=admin \
+						-Jadmin_password=123123q \
+						-JfrontendPoolUsers=1 \
+						-JdeadLocksPoolUsers=0 \
+						-JadminPoolUsers=0'
+				    }
+				}
 				stage("ClientSide Tests") {
 					steps {
-                      sh 'docker run --shm-size=1g --rm --privileged -v "$(pwd)"/results:/sitespeed.io sitespeedio/sitespeed.io:7.6.3 -b chrome  --video --speedIndex http://<projectid>.dummycachetest.com/ -n1 '
-                      }
+					  sh 'docker run --shm-size=1g --rm --privileged -v "${WORKSPACE}"/results:/sitespeed.io sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://<projectid>.dummycachetest.com/ -n1 '
+				      }
 				}
 			}
 		}
-		stage("Pubblish") {
-			steps {
-				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**'
-			}
+	}
+	post {
+		always {
+		    archiveArtifacts allowEmptyArchive: true, artifacts: '**'
 		}
 	}
 }
@@ -83,7 +94,7 @@ Specify:
 Click **Save** and **Build now**
 
 
-## Step #3: create basic performance test
+## Step #3: create advanced performance test
 
 Sign in into Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
@@ -110,36 +121,46 @@ Specify:
 		stage("Docker Test") {
 			steps {
 				sh 'docker -v'
+			    cleanWs()
 			}
 		}
-		stage("Performance Measurements") {
+		stage("Testing") {
 			parallel {
 				stage("ServerSide Tests") {
 					steps {
-                    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -j results/benchmark.log -l results/benchmark-results.jtl -e -o results/report/ \
+                    sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter -n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -l ${WORKSPACE}/jmeter-results.jtl -e -o ${WORKSPACE}/jmeter-dashboard \
                     -Jhost=${MagentoHost} \
                     -Jrequest_protocol=https \
+                    -JfrontendPoolUsers=${FrontendPullUsers} \
+                    -Jloops=${Loops} \
                     -Jbase_path=/ \
                     -Jadmin_path=admin \
                     -Jadmin_user=admin \
                     -Jadmin_password=123123q \
-                    -JfrontendPoolUsers=${FrontendPullUsers} \
-                    -Jloops=${Loops}\
-                    -Jjmeter.save.saveservice.url=true'
+                    -JdeadLocksPoolUsers=0 \
+                    -JadminPoolUsers=0 \
+                    -Jjmeter.save.saveservice.url=true\
+                    -Jjmeter.save.saveservice.response_data=true\
+                    -Jjmeter.save.saveservice.samplerData=true\
+                    -Jjmeter.save.saveservice.requestHeaders=true\
+                    -Jjmeter.save.saveservice.url=true\
+                    -Jjmeter.save.saveservice.responseHeaders=true'
                     }
                 }
 				stage("ClientSide Tests") {
 					steps {
-                      sh 'docker run --shm-size=1g --rm --privileged -v "$(pwd)"/results:/sitespeed.io  sitespeedio/sitespeed.io:7.6.3 --outputFolder=results -b chrome  --video --speedIndex https://${MagentoHost} -n${Loops} '
+                      sh 'curl -O https://raw.githubusercontent.com/andimov/mageconf18/master/docker-compose.yml'
+					  sh 'docker-compose up -d'
+					  sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io sitespeed.io --video false --speedIndex https://${MagentoHost} https://${MagentoHost}/category-1.html https://${MagentoHost}/simple-product-10.html https://${MagentoHost}/configurable-product-1.html https://${MagentoHost}/catalogsearch/result/?q=simple -n${Loops} --graphite.host=graphite'
                       }
 				}
 			}
 		}
-		stage("Pubblish") {
-			steps {
-				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**'
-			}
-		}
+	}
+	post {
+        always {
+            archiveArtifacts allowEmptyArchive: true, artifacts: '**'
+        }
 	}
 }
 ```
