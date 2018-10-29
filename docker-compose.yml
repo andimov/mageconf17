@@ -23,6 +23,14 @@ services:
       volumes:
         - grafana:/var/lib/grafana
       restart: always
+    graphite:
+      image: sitespeedio/graphite:1.0.2-2-b
+      ports:
+        - "2003:2003"
+        - "81:80"
+      restart: always
+      volumes:
+        - whisper:/opt/graphite/storage/whisper
     grafana-setup:
       image: sitespeedio/grafana-bootstrap:7.5
       links:
