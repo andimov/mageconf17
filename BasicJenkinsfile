@@ -1,9 +1,8 @@
 pipeline {
     agent any
     stages {
-        stage("Docker Test") {
+        stage("Clean Workspace") {
             steps {
-                sh 'docker -v'
                 cleanWs()
             }
         }
