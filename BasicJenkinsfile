@@ -13,7 +13,7 @@ pipeline {
 					steps {
 						sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter \
 						-n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -l ${WORKSPACE}/jmeter-results.jtl \
-						-Jhost= \
+						-Jhost=${PROJECT_ID}.dummycachetest.com \
 						-Jrequest_protocol=https \
 						-Jloops=10 \
 						-Jbase_path=/ \
@@ -22,13 +22,19 @@ pipeline {
 						-Jadmin_password=123123q \
 						-JfrontendPoolUsers=1 \
 						-JdeadLocksPoolUsers=0 \
-						-JadminPoolUsers=0'
+						-JadminPoolUsers=0 \
+						-Jjmeter.save.saveservice.url=true \
+						-Jjmeter.save.saveservice.response_data=true \
+						-Jjmeter.save.saveservice.samplerData=true \
+						-Jjmeter.save.saveservice.requestHeaders=true \
+						-Jjmeter.save.saveservice.url=true \
+						-Jjmeter.save.saveservice.responseHeaders=true'
 					}
 				}
 				stage("ClientSide Tests") {
 					steps {
 					  sh 'docker run --shm-size=1g --rm --privileged -v "${WORKSPACE}"/results:/sitespeed.io \
-					  sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex  -n1 '
+					  sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://${PROJECT_ID}.dummycachetest.com/ -n1 '
                       			}
 				}
 			}
