@@ -21,13 +21,7 @@ pipeline {
                         -Jadmin_password=123123q \
                         -JfrontendPoolUsers=1 \
                         -JdeadLocksPoolUsers=0 \
-                        -JadminPoolUsers=0 \
-                        -Jjmeter.save.saveservice.url=true \
-                        -Jjmeter.save.saveservice.response_data=true \
-                        -Jjmeter.save.saveservice.samplerData=true \
-                        -Jjmeter.save.saveservice.requestHeaders=true \
-                        -Jjmeter.save.saveservice.url=true \
-                        -Jjmeter.save.saveservice.responseHeaders=true'
+                        -JadminPoolUsers=0'
                     }
                 }
                 stage("ClientSide Tests") {
