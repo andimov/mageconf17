@@ -13,7 +13,7 @@ pipeline {
 					steps {
 						sh '/var/lib/jenkins/apache-jmeter-3.1/bin/jmeter \
 						-n -t /var/lib/jenkins/apache-jmeter-3.1/bin/benchmark.jmx -l ${WORKSPACE}/jmeter-results.jtl \
-						-Jhost=${PROJECT_ID}.dummycachetest.com \
+						-Jhost=${PROJECT_HOST} \
 						-Jrequest_protocol=https \
 						-Jloops=10 \
 						-Jbase_path=/ \
@@ -34,7 +34,7 @@ pipeline {
 				stage("ClientSide Tests") {
 					steps {
 					  sh 'docker run --shm-size=1g --rm --privileged -v "${WORKSPACE}"/results:/sitespeed.io \
-					  sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://${PROJECT_ID}.dummycachetest.com/ -n1 '
+					  sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://${PROJECT_HOST}/ -n1 '
                       			}
 				}
 			}
