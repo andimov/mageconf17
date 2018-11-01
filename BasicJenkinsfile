@@ -19,7 +19,7 @@ pipeline {
                         -Jadmin_path=admin \
                         -Jadmin_user=admin \
                         -Jadmin_password=123123q \
-                        -JfrontendPoolUsers=1 \
+                        -JfrontendPoolUsers=2 \
                         -JdeadLocksPoolUsers=0 \
                         -JadminPoolUsers=0'
                     }
@@ -27,7 +27,7 @@ pipeline {
                 stage("ClientSide Tests") {
                     steps {
                       sh 'docker run --shm-size=1g --rm --privileged -v "${WORKSPACE}"/results:/sitespeed.io \
-                      sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://${PROJECT_HOST}/ -n1 '
+                      sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://${PROJECT_HOST}/ -n3 '
                                   }
                 }
             }
