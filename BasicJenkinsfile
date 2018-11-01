@@ -19,7 +19,7 @@ pipeline {
                         -Jadmin_path=admin \
                         -Jadmin_user=admin \
                         -Jadmin_password=123123q \
-                        -JfrontendPoolUsers=2 \
+                        -JfrontendPoolUsers=1 \
                         -JdeadLocksPoolUsers=0 \
                         -JadminPoolUsers=0'
                     }
