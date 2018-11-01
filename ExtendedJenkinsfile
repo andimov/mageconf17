@@ -2,12 +2,12 @@ pipeline {
     parameters {
         string(
             name: 'Loops',
-            defaultValue: '10',
+            defaultValue: '2',
             description: 'Loops count for CS and SS testing'
         )
         string(
             name: 'FrontendPullUsers',
-            defaultValue: '2',
+            defaultValue: '4',
             description: 'Threads count for ServerSide testing'
         )
     }
