@@ -9,7 +9,7 @@ sudo InstallJenkinsOnAmazonOS.sh
 ```
 Open displayed URL in the browser and specify generated key in WEB UI to perform an installation.
 
-## Step #1: Connect to instance using ssh
+## Step #1: Connect to Magento instance using ssh
 Go to the **Projects** tab and select a project. Connect the instance using ssh link in a web UI:
 
 ![Connect to the project](/images/access_site.png?raw=true)
@@ -18,11 +18,11 @@ Go to the **Projects** tab and select a project. Connect the instance using ssh 
 ssh <projectid>-master-7rqtwti--mymagento@ssh.eu-4.magento.cloud
 ```
 
-## Step #2: Generate performance profile
+## Step #2: Generate Magento performance profile
 ```
 php bin/magento setup:perf:generate-fixtures setup/performance-toolkit/profiles/ee/small.xml
 ```
-## Step #3: Performance optimizations and preparations
+## Step #3: Perform Magento optimizations and preparations
 ``` 
 php bin/magento indexer:set-mode schedule 
 rm -rf pub/static/* var/view_preprocessed/pub
@@ -42,7 +42,7 @@ php bin/magento cache:flush"
 
 ## Step #4: Create basic performance test
 
-Sign in to Jenkins provided in access paper, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
+Sign in to Jenkins, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
 Specify content from [BasicJenkinsfile](BasicJenkinsfile)
 
@@ -50,7 +50,7 @@ Click **Save** and **Build now**
 
 ## Step #5: Create extended performance test
 
-Sign in to Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
+Sign in to Jenkins, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
 Specify content from [ExtendedJenkinsfile](ExtendedJenkinsfile)
 
