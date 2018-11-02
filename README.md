@@ -3,7 +3,7 @@
 ## Step #1: Connect to instance by ssh
 Go to the **Projects** tab and select a project. Connect the instance using ssh link in a web UI:
 
-![Connect to the project](/images/clone_project.png?raw=true)
+![Connect to the project](/images/access_site.png?raw=true)
 
 ```
 ssh <projectid>-master-7rqtwti--mymagento@ssh.eu-4.magento.cloud
