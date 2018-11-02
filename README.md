@@ -1,6 +1,15 @@
 # MageConf’18  workshop
 
-## Step #1: Connect to instance by ssh
+## Step #0: Install jenkins, docker, jmeter, git on aws
+Launch Amazon Linux 2 AMI (HVM), SSD Volume Type - ami-02ea8f348fa28c108 on ec2 instance with 2+ cores and 4+ Gb RAM with opened 3000 and 8080 ports for inbound connections.
+connect trough ssh and perform [InstallationScript](InstallJenkinsOnAmazonOS.sh) with sudo:
+```
+wget https://raw.githubusercontent.com/andimov/mageconf18/master/InstallJenkinsOnAmazonOS.sh
+sudo InstallJenkinsOnAmazonOS.sh
+```
+Open displayed URL in the browser and specify generated key in WEB UI to perform an installation.
+
+## Step #1: Connect to instance using ssh
 Go to the **Projects** tab and select a project. Connect the instance using ssh link in a web UI:
 
 ![Connect to the project](/images/access_site.png?raw=true)
@@ -13,7 +22,7 @@ ssh <projectid>-master-7rqtwti--mymagento@ssh.eu-4.magento.cloud
 ```
 php bin/magento setup:perf:generate-fixtures setup/performance-toolkit/profiles/ee/small.xml
 ```
-## Step #3: Generate performance profile
+## Step #3: Performance optimizations and preparations
 ``` 
 php bin/magento indexer:set-mode schedule 
 rm -rf pub/static/* var/view_preprocessed/pub
