@@ -5,7 +5,7 @@ Launch Amazon Linux 2 AMI (HVM), SSD Volume Type - ami-02ea8f348fa28c108 on ec2 
 connect trough ssh and perform [InstallationScript](InstallJenkinsOnAmazonOS.sh) with sudo:
 ```
 wget https://raw.githubusercontent.com/andimov/mageconf18/master/InstallJenkinsOnAmazonOS.sh
-sudo InstallJenkinsOnAmazonOS.sh
+sudo bash InstallJenkinsOnAmazonOS.sh
 ```
 Open displayed URL in the browser and specify generated key in WEB UI to perform an installation.
 
