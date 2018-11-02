@@ -11,6 +11,7 @@ usermod -a -G docker jenkins
 curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose
 chmod +x /usr/bin/docker-compose
 usermod -a -G ec2-user jenkins
+systemctl enable docker
 
 
 cd /var/lib/jenkins/ && curl -k -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-3.1.tgz 
