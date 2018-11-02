@@ -13,9 +13,8 @@ pipeline {
     }
     agent any
     stages {
-        stage("Docker Test") {
+        stage("Clean Workspace") {
             steps {
-                sh 'docker -v'
                 cleanWs()
             }
         }
@@ -46,7 +45,7 @@ pipeline {
                     steps {
                         sh 'curl -O https://raw.githubusercontent.com/andimov/mageconf18/master/docker-compose.yml'
                         sh 'docker-compose up -d'
-                        sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io sitespeed.io --video false --speedIndex https://${PROJECT_HOST} https://${PROJECT_HOST}/category-1.html https://${PROJECT_HOST}/simple-product-10.html https://${PROJECT_HOST}/configurable-product-1.html https://${PROJECT_HOST}/catalogsearch/result/?q=simple -n${Loops} --graphite.host=graphite'
+                        sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io sitespeed.io --video false --speedIndex https://${PROJECT_HOST} https://${PROJECT_HOST}/category-1.html https://${PROJECT_HOST}/simple-product-10.html https://${PROJECT_HOST}/configurable-product-1.html -n${Loops} --graphite.host=graphite'
                     }
                 }
             }
