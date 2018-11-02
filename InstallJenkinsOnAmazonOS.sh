@@ -28,4 +28,4 @@ chown jenkins:jenkins -R /var/lib/jenkins
 
 service jenkins start
 curl ipecho.net/plain ; echo :8080/ 
-sleep 10 && sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+sleep 20 && sudo cat /var/lib/jenkins/secrets/initialAdminPassword
