@@ -1,6 +1,6 @@
 # MageConf’18  workshop
 
-## Step #0: Install jenkins, docker, jmeter, git on aws
+## Step #0: Install jenkins, docker, doker-compose, jmeter and git on aws
 Launch Amazon Linux 2 AMI (HVM), SSD Volume Type - ami-02ea8f348fa28c108 on ec2 instance with 2+ cores and 4+ Gb RAM with opened 3000 and 8080 ports for inbound connections.
 connect trough ssh and perform [InstallationScript](InstallJenkinsOnAmazonOS.sh) with sudo:
 ```
@@ -42,7 +42,7 @@ php bin/magento cache:flush"
 
 ## Step #4: Create basic performance test
 
-Sign in into Jenkins provided in access paper, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
+Sign in to Jenkins provided in access paper, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
 Specify content from [BasicJenkinsfile](BasicJenkinsfile)
 
@@ -50,7 +50,7 @@ Click **Save** and **Build now**
 
 ## Step #5: Create extended performance test
 
-Sign in into Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
+Sign in to Jenkins provided in, click **Add New Item**, specify name for build and select **Pipeline**. Click **Create**
 
 Specify content from [ExtendedJenkinsfile](ExtendedJenkinsfile)
 
