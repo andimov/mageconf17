@@ -1,6 +1,6 @@
 # MageConf’18  workshop
 
-## Step #0: Install jenkins, docker, docker-compose, jmeter and git on aws
+## Step #0: Install jenkins, docker, docker-compose and jmeter on aws
 Launch Amazon Linux 2 AMI (HVM), SSD Volume Type - ami-02ea8f348fa28c108 on ec2 instance with 2+ cores and 4+ Gb RAM with opened 3000 and 8080 ports for inbound connections.
 connect trough ssh and perform [InstallationScript](InstallJenkinsOnAmazonOS.sh) with sudo:
 ```
