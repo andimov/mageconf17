@@ -27,7 +27,7 @@ pipeline {
                 stage("ClientSide Tests") {
                     steps {
                       sh 'docker run --shm-size=1g --rm --privileged -v "${WORKSPACE}"/results:/sitespeed.io \
-                      sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --speedIndex https://${PROJECT_HOST}/ -n3 '
+                      sitespeedio/sitespeed.io:7.6.3 -b chrome  --video false --visualMetrics false https://${PROJECT_HOST}/ -n3 '
                                   }
                 }
             }
