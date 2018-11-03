@@ -45,7 +45,7 @@ pipeline {
                     steps {
                         sh 'curl -O https://raw.githubusercontent.com/andimov/mageconf18/master/docker-compose.yml'
                         sh 'docker-compose up -d'
-                        sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io --video false --visualMetrics false https://${PROJECT_HOST} https://${PROJECT_HOST}/category-1.html https://${PROJECT_HOST}/simple-product-10.html https://${PROJECT_HOST}/configurable-product-1.html -n${Loops} --graphite.host=graphite'
+                        sh 'docker-compose run -v "${WORKSPACE}"/results:/sitespeed.io sitespeed.io --video false --visualMetrics false https://${PROJECT_HOST} https://${PROJECT_HOST}/category-1.html https://${PROJECT_HOST}/simple-product-10.html https://${PROJECT_HOST}/configurable-product-1.html -n${Loops} --graphite.host=graphite'
                     }
                 }
             }
